@@ -8,6 +8,11 @@ function random(min, max) {
 let employeeArray = [];
 let uniqueID = 1000;
 
+// function to get the stored Data from the local storage
+function getLocalStorageData() {
+  let getStorage = JSON.parse(localStorage.getItem("Employee"));
+  return getStorage;
+}
 
 // constructor to create Employee instances
 function Employee(name, department, level, image) {
@@ -19,7 +24,6 @@ function Employee(name, department, level, image) {
   this.salary = 0;
   employeeArray.push(this);
 }
-
 
 // function to create random salary depending on the level
 Employee.prototype.calculateSalary = function () {
@@ -88,6 +92,23 @@ let Hadi = new Employee(
   "https://media.istockphoto.com/photos/shot-of-a-young-businessman-using-a-laptop-in-a-modern-office-picture-id1354898581?b=1&k=20&m=1354898581&s=170667a&w=0&h=Jkv4uO6gEaLFtz6F22ZrEk4VQljqLNKMuVpdRlIYoEY="
 );
 
+// function to re-instantiation
+function re_instantiation() {
+  if (getLocalStorageData() !== null) {
+    employeeArray = [];
+    for (let i = 0; i < getLocalStorageData().length; i++) {
+      employeeArray[i] = new Employee(
+        getLocalStorageData()[i].name,
+        getLocalStorageData()[i].department,
+        getLocalStorageData()[i].level,
+        getLocalStorageData()[i].image
+      );
+    }
+  }
+}
+
+re_instantiation();
+
 // prototype function to render the instances
 Employee.prototype.render = function () {
   let newCard = document.createElement("div");
@@ -114,7 +135,7 @@ for (let i = 0; i < employeeArray.length; i++) {
   employeeArray[i].render();
 }
 
-let form = document.getElementById("form");   
+let form = document.getElementById("form");
 form.addEventListener("submit", submitter);
 
 //function to submit the form
@@ -128,5 +149,11 @@ function submitter(event) {
   let newEmployee = new Employee(fullName, department, level, image);
   newEmployee.calculateSalary();
   newEmployee.render();
-  console.log(employeeArray);
+  updateLocalStorage();
 }
+
+function updateLocalStorage() {
+  let SrtingArr = JSON.stringify(employeeArray);
+  localStorage.setItem("Employee", SrtingArr);
+}
+updateLocalStorage();
